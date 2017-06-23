@@ -1,0 +1,96 @@
+---
+title: "Analyzing Donald Trump inauguration speech"
+author: "Mouna BELAID, Engineering Student"
+date: "January 22th 2017"
+output: 
+  html_document:
+    toc: true
+    depth: 1
+    number_sections: true
+    theme: united
+    highlight: tango
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+#Introduction{style="background-color: #fdd49e"}
+
+"**January** **20th** **2017** will be remerbered as the day the people became the rules of this nation again" said Donald Trump. It was an unforgetabble day for all american people.
+
+In this regard, I got the idea of analyzing [**the Donald Trump inauguration speech**](http://www.independent.co.uk/news/world/americas/donald-trump-inauguration-speech-transcript-text-full-read-a7538131.html) and I could not find a better software than R to obtain good results. 
+I resort to **Data Mining** to create a wordcloud which resume the main words said by the 45th President of the United States.
+Data Mining is one of the interesting techniques of exploring data. 
+
+#Analysis of political speech{style="background-color: #fdd49e"}
+
+```{r}  
+#Loading packages
+library(RColorBrewer) #color pallet
+library(tm) #package text mining (tm)
+library(wordcloud) 
+library(DT) 
+
+```
+First of all, I load data (speech) that was in a file text.
+```{r, warning=F}
+text<-readLines("C:/text.txt",encoding ='UTF-8')
+text[1:10]
+```
+The next step is to clean data.
+```{r, warning=F}
+#Removing the stopwords
+text<-removeWords(text,stopwords("en"))
+#Removing the punctuations
+text<-removePunctuation(text)
+#Removing the empty spaces
+text<-text[-which(text=="")]
+#Making all text lowercase
+for (i in 1:length(text)) text[i]<-tolower(text[i])
+#Choosing the words to be removed
+text<-removeWords(text,c("the","there","this","'ve","it's","their","and"))
+```
+Corpus is a set of text vectors
+
+```{r, warning=F}
+doc<-Corpus(VectorSource(text))
+```
+The term-documents matrix is a table containing the frequency of each word in the speech.
+
+```{r, warning=F}
+#Building a matrix of words
+(tdm<-TermDocumentMatrix(doc))
+dim(tdm)
+```
+We can conclude that there are 424 words and 61 paragraphs in the text.
+
+```{r, warning=F}
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+```
+
+I try to display every word included in the speech in an attractive way using the package **DT**. Therefore I got a table that shows each word and its frequency.
+```{r, warning=F}
+d <- data.frame(word = names(v),freq=v)
+datatable(d,class='compact',options = list(
+  initComplete = JS(
+    "function(settings, json) {",
+    "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+    "}")
+))
+```
+
+Creating the wordcloud
+```{r, warning=F}
+wordcloud(words = d$word, freq = d$freq, min.freq = 1,random.order=FALSE,max.words=200,
+rot.per=0.35,colors=brewer.pal(20, "Paired"))
+```
+
+*Note: Feel free to ask me about anything that seems not clear!*
+
