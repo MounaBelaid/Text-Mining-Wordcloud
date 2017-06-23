@@ -1,0 +1,2 @@
+# Text-Mining
+“January 20th 2017 will be remerbered as the day the people became the rules of this nation again” said Donald Trump. It was an unforgetabble day for all american people.  In this regard, I got the idea of analyzing the Donald Trump inauguration speech and I could not find a better software than R to obtain good results. I resort to Data Mining to create a wordcloud which resume the main words said by the 45th President of the United States. Data Mining is one of the interesting techniques of exploring data.
